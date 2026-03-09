@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LED Controller" />
+  <title>LED Controller – Lights Co</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="prog-banner" id="prog-banner">⚡ PROG MODE – LONG PRESS SCENE TO EXIT</div>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-area" id="logo-btn" title="Refresh info">
+      <div class="logo-dots" id="logo-dots"></div>
+      <div class="logo-text">
+        <span class="brand">LIGHTS CO</span>
+        <span class="tagline">lighting innovation</span>
+      </div>
+    </div>
+
+    <div class="tx-group">
+      <button class="tx-btn tx-btn-all active" id="btn-all" onclick="selectTx(0)">ALL</button>
+      <button class="tx-btn tx-btn-1" id="btn-tx1" onclick="selectTx(1)">TX 1<span class="tx-status-dot" id="txdot-1"></span></button>
+      <button class="tx-btn tx-btn-2" id="btn-tx2" onclick="selectTx(2)">TX 2<span class="tx-status-dot" id="txdot-2"></span></button>
+      <button class="tx-btn tx-btn-3" id="btn-tx3" onclick="selectTx(3)">TX 3<span class="tx-status-dot" id="txdot-3"></span></button>
+      <button class="tx-btn tx-btn-4" id="btn-tx4" onclick="selectTx(4)">TX 4<span class="tx-status-dot" id="txdot-4"></span></button>
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
+      <button class="icon-btn danger" onclick="confirmExit()" title="Exit">✕</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- LEFT: scenes + timeline buttons -->
+    <div class="left-panel">
+      <div class="scene-row">
+        <button class="scene-btn" id="s1" data-scene="1"
+          onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
+          ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
+          onmouseleave="sceneLeave(this)">S1</button>
+        <button class="scene-btn" id="s2" data-scene="2"
+          onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
+          ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
+          onmouseleave="sceneLeave(this)">S2</button>
+        <button class="scene-btn" id="s3" data-scene="3"
+          onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
+          ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
+          onmouseleave="sceneLeave(this)">S3</button>
+        <button class="scene-btn" id="s4" data-scene="4"
+          onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
+          ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
+          onmouseleave="sceneLeave(this)">S4</button>
+      </div>
+      <div class="timeline-grid" id="timeline-grid"></div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+
+      <div class="current-label">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="current-label">–</span>
+      </div>
+
+      <div class="sliders-area">
+        <div class="slider-row">
+          <span class="slider-label">Brightness</span>
+          <input type="range" id="brightness-slider" min="1" max="10" value="10"
+            oninput="onBrightness(this.value)" onchange="sendBrightness(this.value)">
+          <span class="slider-value" id="brightness-val">10</span>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label">Speed</span>
+          <input type="range" id="speed-slider" min="1" max="10" value="8"
+            oninput="onSpeed(this.value)" onchange="sendSpeed(this.value)">
+          <span class="slider-value" id="speed-val">8</span>
+        </div>
+      </div>
+
+      <!-- Solid colors row -->
+      <div class="color-row" id="color-row"></div>
+
+      <!-- Main effects -->
+      <div class="effects-area">
+        <button class="effect-btn btn-loop"       onclick="sendTimeline(0)"   id="btn-loop">⟳ Loop</button>
+        <button class="effect-btn btn-strobe"     onclick="sendEfx(2)"       id="btn-strobe">⚡ Strobe</button>
+        <button class="effect-btn btn-whiteflash" onclick="sendEfx(1)"       id="btn-wflash">◈ White Flash</button>
+      </div>
+      <div class="effects-area">
+        <button class="effect-btn btn-fade"       onclick="sendTimeline(127)" id="btn-fade">◐ Fade</button>
+        <button class="effect-btn btn-colorflash" onclick="sendTimeline(128)" id="btn-cflash">◈ Color Flash</button>
+      </div>
+
+      <!-- Auto programs -->
+      <div class="auto-grid" id="auto-grid"></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal">
+    <h2>⚙ Settings</h2>
+    <label>TX 1 – IP Address</label>
+    <input type="text" id="ip1" placeholder="192.168.80.5">
+    <label>TX 2 – IP Address</label>
+    <input type="text" id="ip2" placeholder="192.168.80.6">
+    <label>TX 3 – IP Address</label>
+    <input type="text" id="ip3" placeholder="192.168.80.7">
+    <label>TX 4 – IP Address</label>
+    <input type="text" id="ip4" placeholder="192.168.80.8">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+      <button class="btn-confirm" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <h2>🔒 Admin Login</h2>
+    <label>Password</label>
+    <input type="password" id="login-pwd" placeholder="Enter password" onkeyup="loginKeyUp(event)">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeLogin()">Cancel</button>
+      <button class="btn-confirm" onclick="doLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-exit">
+  <div class="modal">
+    <h2>Exit Application?</h2>
+    <p style="color:var(--text-dim);font-size:14px;margin-top:4px">The controller will stop responding to commands.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeExit()">No</button>
+      <button class="btn-confirm btn-danger-confirm" onclick="doExit()">Yes, Exit</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+const state = {
+  ipList: ['192.168.80.5', '192.168.80.6', '192.168.80.7', '192.168.80.8'],
+  currentTx: 0,       // 0 = ALL
+  bProgScene: false,
+  progScene: null,     // 's1'..'s4'
+  scenes: { s1: [-1,-1,-1,-1], s2: [-1,-1,-1,-1], s3: [-1,-1,-1,-1], s4: [-1,-1,-1,-1] },
+  selectedTimeline: null,
+  currentEfx: 0,
+  brightness: 10,
+  speed: 8,
+  sceneDownTime: 0,
+  sceneMouseDown: false,
+  lastCurrent: '',
+};
+
+// ═══════════════════════════════════════════
+//  PERSIST (localStorage)
+// ═══════════════════════════════════════════
+function loadStorage() {
+  try {
+    const ips = localStorage.getItem('ipList');
+    if (ips) state.ipList = JSON.parse(ips);
+    const sc = localStorage.getItem('scenes');
+    if (sc) state.scenes = JSON.parse(sc);
+  } catch(e) {}
+}
+function saveStorage() {
+  try {
+    localStorage.setItem('ipList', JSON.stringify(state.ipList));
+    localStorage.setItem('scenes', JSON.stringify(state.scenes));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+//  TIMELINE MAP
+// ═══════════════════════════════════════════
+const tlNames = {
+  0: 'LOOP', 127: 'FADE', 128: 'COLOR FLASH',
+  110: 'RED', 111: 'ORANGE', 112: 'YELLOW', 113: 'GREEN',
+  114: 'SKY', 115: 'BLUE', 116: 'PURPLE', 117: 'PINK',
+  118: 'WHITE', 119: 'BLACK',
+  130:'Auto 1',131:'Auto 2',132:'Auto 3',133:'Auto 4',134:'Auto 5',
+  135:'Auto 6',136:'Auto 7',137:'Auto 8',138:'Auto 9',139:'Auto 10',
+  140:'Auto 11',141:'Auto 12',142:'Auto 13',143:'Auto 14',144:'Auto 15',
+  145:'Auto 16',146:'Auto 17',147:'Auto 18',148:'Auto 19',149:'Auto 20',
+};
+
+const colorDefs = [
+  { tl:110, label:'', color:'#e53935' },
+  { tl:111, label:'', color:'#fb8c00' },
+  { tl:112, label:'', color:'#fdd835' },
+  { tl:113, label:'', color:'#43a047' },
+  { tl:114, label:'', color:'#00bcd4' },
+  { tl:115, label:'', color:'#1e88e5' },
+  { tl:116, label:'', color:'#8e24aa' },
+  { tl:117, label:'', color:'#e91e8c' },
+  { tl:118, label:'', color:'#f5f5f5' },
+  { tl:119, label:'', color:'#424242' },
+];
+
+// ═══════════════════════════════════════════
+//  BUILD UI
+// ═══════════════════════════════════════════
+function buildLogoDots() {
+  const dotColors = [
+    '#e53935','#43a047','#1e88e5','#fdd835',
+    '#e91e8c','#00bcd4','#8e24aa','#fb8c00',
+    '#66bb6a','#42a5f5','#ce93d8','#80cbc4',
+  ];
+  const container = document.getElementById('logo-dots');
+  dotColors.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'logo-dot';
+    d.style.background = c;
+    container.appendChild(d);
+  });
+}
+
+function buildTimelineGrid() {
+  const grid = document.getElementById('timeline-grid');
+  const rows = [
+    { nums:[1,2,3,4],   classes:['tl-red','tl-green','tl-blue','tl-white'] },
+    { nums:[5,6,7,8],   classes:['tl-red','tl-green','tl-blue','tl-white'] },
+    { nums:[9,10,11,12],classes:['tl-red','tl-green','tl-blue','tl-white'] },
+    { nums:[13,14,15,16],classes:['tl-red','tl-green','tl-blue','tl-white'] },
+    { nums:[17,18,19,20],classes:['tl-red','tl-green','tl-blue','tl-white'] },
+  ];
+  // Map display number -> timeline number
+  // 1->130, 2->131 ... 20->149
+  rows.forEach(row => {
+    row.nums.forEach((n,i) => {
+      const tl = 129 + n;
+      const btn = document.createElement('button');
+      btn.className = `tl-btn ${row.classes[i]}`;
+      btn.textContent = n;
+      btn.dataset.tl = tl;
+      btn.id = `tl-${tl}`;
+      btn.onclick = () => timelineClick(tl, btn);
+      grid.appendChild(btn);
+    });
+  });
+}
+
+function buildColorRow() {
+  const row = document.getElementById('color-row');
+  colorDefs.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch';
+    sw.style.background = c.color;
+    sw.dataset.tl = c.tl;
+    sw.id = `col-${c.tl}`;
+    sw.onclick = () => timelineClick(c.tl, sw, true);
+    row.appendChild(sw);
+  });
+}
+
+function buildAutoGrid() {
+  const grid = document.getElementById('auto-grid');
+  // autos 11-20 on right panel
+  // We'll use the same 130-149 but labeled Auto 1-20
+  // Already in timeline grid. Here add nothing extra – the original app had them in the main grid.
+  // Keep grid hidden
+  grid.style.display = 'none';
+}
+
+// ═══════════════════════════════════════════
+//  TX HEALTH MONITOR
+// ═══════════════════════════════════════════
+// txStatus: 'unknown' | 'ok' | 'err'
+const txStatus = { 1: 'unknown', 2: 'unknown', 3: 'unknown', 4: 'unknown' };
+let healthTimer = null;
+
+function setTxDot(txNum, status) {
+  // status: 'unknown' | 'ok' | 'err'
+  if (txStatus[txNum] === status) return; // no change
+  txStatus[txNum] = status;
+  const dot = document.getElementById(`txdot-${txNum}`);
+  if (!dot) return;
+  dot.className = 'tx-status-dot ' + status;
+  dot.title = status === 'ok'  ? `TX ${txNum}: raggiungibile` :
+              status === 'err' ? `TX ${txNum}: non raggiungibile` : '';
+  // If this TX is currently selected, also update global status bar
+  if (state.currentTx === txNum) {
+    setStatus(status === 'ok' ? 'ok' : 'err');
+  }
+  // Toast only on state change to error
+  if (status === 'err') {
+    showToast(`TX ${txNum} non raggiungibile`, 'error');
+  }
+}
+
+async function pingTx(txNum) {
+  const ip = state.ipList[txNum - 1];
+  if (!ip) { setTxDot(txNum, 'unknown'); return; }
+  try {
+    await httpGet(ip, '/txinfo');
+    setTxDot(txNum, 'ok');
+  } catch(e) {
+    setTxDot(txNum, 'err');
+  }
+}
+
+async function pingAllTx() {
+  const configured = state.ipList.map((ip, i) => ip ? i + 1 : null).filter(Boolean);
+  await Promise.allSettled(configured.map(n => pingTx(n)));
+}
+
+function startHealthMonitor(intervalMs = 5000) {
+  stopHealthMonitor();
+  pingAllTx(); // immediate first check
+  healthTimer = setInterval(pingAllTx, intervalMs);
+}
+
+function stopHealthMonitor() {
+  if (healthTimer) { clearInterval(healthTimer); healthTimer = null; }
+}
+
+
+function selectTx(n) {
+  state.currentTx = n;
+  ['btn-all','btn-tx1','btn-tx2','btn-tx3','btn-tx4'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('active', i === n);
+  });
+  // Hide tx buttons for unconfigured IPs
+  updateTxVisibility();
+  if (state.bProgScene) showCurrentScene();
+  else getInfo();
+}
+
+function updateTxVisibility() {
+  ['btn-tx2','btn-tx3','btn-tx4'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.style.display = state.ipList[i+1] ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════
+//  HTTP HELPERS
+// ═══════════════════════════════════════════
+async function httpGet(ip, path) {
+  const url = `http://${ip}${path}`;
+  const resp = await fetch(url, { signal: AbortSignal.timeout(800) });
+  return resp.text();
+}
+
+async function httpPost(ip, path, params) {
+  const url = `http://${ip}${path}`;
+  const body = new URLSearchParams(params);
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString(),
+    signal: AbortSignal.timeout(800),
+  });
+  return resp.text();
+}
+
+function getTargetIps() {
+  if (state.currentTx === 0)
+    return state.ipList.filter(Boolean);
+  const ip = state.ipList[state.currentTx - 1];
+  return ip ? [ip] : [];
+}
+
+// ═══════════════════════════════════════════
+//  COMMANDS
+// ═══════════════════════════════════════════
+function setCurrentLabel(text) {
+  document.getElementById('current-label').textContent = text.toUpperCase();
+}
+
+function setStatus(mode) { // 'idle' | 'sending' | 'ok' | 'err'
+  const dot = document.getElementById('status-dot');
+  dot.className = 'status-dot' + (mode !== 'idle' ? ` ${mode}` : '');
+}
+
+async function sendTimeline(tl) {
+  if (state.bProgScene) { setSceneTimeline(tl); return; }
+  const name = tlNames[tl] || `TL ${tl}`;
+  setCurrentLabel(name);
+  setStatus('sending');
+  const ips = getTargetIps();
+  try {
+    await Promise.all(ips.map(ip => httpPost(ip, '/chtl', { tlnum: tl })));
+    setStatus('ok');
+  } catch(e) {
+    setStatus('err');
+  }
+  // clear selected efx
+  document.getElementById('btn-strobe').classList.remove('active');
+  document.getElementById('btn-wflash').classList.remove('active');
+}
+
+async function sendEfx(efxnum) {
+  if (state.bProgScene) return;
+  setStatus('sending');
+  const ips = getTargetIps();
+  let newEfx = 0;
+  try {
+    const results = await Promise.all(ips.map(ip => httpPost(ip, '/setefx', { efxnum })));
+    // Use first result to update UI
+    if (results[0]) newEfx = parseInt(results[0]) || 0;
+    setStatus('ok');
+  } catch(e) {
+    setStatus('err');
+  }
+  document.getElementById('btn-strobe').classList.toggle('active', newEfx === 2);
+  document.getElementById('btn-wflash').classList.toggle('active', newEfx === 1);
+}
+
+async function sendBrightness(val) {
+  setStatus('sending');
+  const ips = getTargetIps();
+  try {
+    await Promise.all(ips.map(ip => httpGet(ip, `/setbrightness${val}`)));
+    setStatus('ok');
+  } catch(e) { setStatus('err'); }
+}
+
+async function sendSpeed(val) {
+  setStatus('sending');
+  const ips = getTargetIps();
+  try {
+    await Promise.all(ips.map(ip => httpGet(ip, `/setspeed${val}`)));
+    setStatus('ok');
+  } catch(e) { setStatus('err'); }
+}
+
+async function getInfo() {
+  const ip = state.currentTx <= 1 ? state.ipList[0] : state.ipList[state.currentTx - 1];
+  if (!ip) return;
+  try {
+    const ris = await httpGet(ip, '/txinfo');
+    parseInfo(ris);
+    setStatus('ok');
+  } catch(e) { setStatus('err'); }
+}
+
+function parseInfo(ris) {
+  // format: "timeline=0|efx=1|vel=8|bright=10"
+  ris.split('|').forEach(part => {
+    const [k, v] = part.split('=');
+    if (!k || v === undefined) return;
+    const val = parseInt(v);
+    if (k === 'timeline') {
+      const name = tlNames[val] || `TL ${val}`;
+      setCurrentLabel(name);
+    }
+    if (k === 'efx') {
+      document.getElementById('btn-strobe').classList.toggle('active', val === 2);
+      document.getElementById('btn-wflash').classList.toggle('active', val === 1);
+    }
+    if (k === 'vel') {
+      document.getElementById('speed-slider').value = val;
+      document.getElementById('speed-val').textContent = val;
+    }
+    if (k === 'bright') {
+      document.getElementById('brightness-slider').value = val;
+      document.getElementById('brightness-val').textContent = val;
+    }
+  });
+}
+
+// ═══════════════════════════════════════════
+//  SLIDER HANDLERS
+// ═══════════════════════════════════════════
+function onBrightness(v) { document.getElementById('brightness-val').textContent = v; }
+function onSpeed(v)      { document.getElementById('speed-val').textContent = v; }
+
+// ═══════════════════════════════════════════
+//  TIMELINE CLICK
+// ═══════════════════════════════════════════
+function timelineClick(tl, el, isColor) {
+  // clear previous selection
+  document.querySelectorAll('.tl-btn.selected, .color-swatch.selected').forEach(b => b.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  el?.classList.add('lit');
+  setTimeout(() => el?.classList.remove('lit'), 300);
+  sendTimeline(tl);
+}
+
+// ═══════════════════════════════════════════
+//  SCENE PROGRAMMING
+// ═══════════════════════════════════════════
+let sceneHoldTimer = null;
+
+function sceneDown(el) {
+  state.sceneMouseDown = true;
+  state.sceneDownTime = Date.now();
+  el.classList.add('active');
+  sceneHoldTimer = setTimeout(() => {
+    if (state.sceneMouseDown) enterProgMode(el);
+  }, 5000);
+}
+
+function sceneUp(el) {
+  clearTimeout(sceneHoldTimer);
+  const held = Date.now() - state.sceneDownTime;
+  state.sceneMouseDown = false;
+
+  if (state.bProgScene) {
+    if (held >= 5000) {
+      // already handled by timer
+    } else {
+      // switch prog scene
+      const allS = document.querySelectorAll('.scene-btn');
+      allS.forEach(s => { s.classList.remove('active','prog-mode'); });
+      el.classList.add('prog-mode');
+      state.progScene = el.id;
+      document.getElementById('current-label').textContent = 'PROG ' + el.id.toUpperCase();
+      showCurrentScene();
+    }
+  } else {
+    el.classList.remove('active');
+    sendScene(el);
+  }
+}
+
+function sceneLeave(el) {
+  clearTimeout(sceneHoldTimer);
+  state.sceneMouseDown = false;
+  if (!state.bProgScene) el.classList.remove('active');
+}
+
+function enterProgMode(el) {
+  state.bProgScene = true;
+  state.lastCurrent = document.getElementById('current-label').textContent;
+  // ensure a TX is selected
+  if (state.currentTx === 0) {
+    selectTx(1);
+  }
+  document.querySelectorAll('.scene-btn').forEach(s => { s.classList.remove('active','prog-mode'); });
+  el.classList.add('prog-mode');
+  state.progScene = el.id;
+  document.getElementById('current-label').textContent = 'PROG ' + el.id.toUpperCase();
+  document.getElementById('prog-banner').classList.add('show');
+  showCurrentScene();
+}
+
+function exitProgMode() {
+  saveStorage();
+  state.bProgScene = false;
+  document.querySelectorAll('.scene-btn').forEach(s => { s.classList.remove('active','prog-mode'); });
+  document.getElementById('prog-banner').classList.remove('show');
+  document.getElementById('current-label').textContent = state.lastCurrent || '–';
+  // clear selected glows
+  document.querySelectorAll('.tl-btn.selected, .color-swatch.selected').forEach(b => b.classList.remove('selected'));
+}
+
+function setSceneTimeline(tl) {
+  if (!state.bProgScene || !state.progScene) return;
+  const txIndex = state.currentTx > 0 ? state.currentTx - 1 : 0;
+  state.scenes[state.progScene][txIndex] = tl;
+  showCurrentScene();
+  showToast(`Scene ${state.progScene.toUpperCase()} TX${txIndex+1} → ${tlNames[tl] || tl}`, 'success');
+}
+
+function showCurrentScene() {
+  document.querySelectorAll('.tl-btn.selected, .color-swatch.selected').forEach(b => b.classList.remove('selected'));
+  if (!state.bProgScene || !state.progScene) return;
+  const txIndex = state.currentTx > 0 ? state.currentTx - 1 : 0;
+  const tl = state.scenes[state.progScene][txIndex];
+  if (tl !== -1) {
+    const el = document.getElementById(`tl-${tl}`) || document.getElementById(`col-${tl}`);
+    if (el) el.classList.add('selected');
+  }
+}
+
+async function sendScene(el) {
+  const sceneId = el.id; // 's1'..'s4'
+  const sceneTls = state.scenes[sceneId];
+  const name = 'SCENE ' + sceneId.toUpperCase();
+  setCurrentLabel(name);
+  setStatus('sending');
+  try {
+    const promises = [];
+    state.ipList.forEach((ip, i) => {
+      if (ip && sceneTls[i] !== -1) {
+        promises.push(httpPost(ip, '/chtl', { tlnum: sceneTls[i] }));
+      }
+    });
+    await Promise.all(promises);
+    setStatus('ok');
+  } catch(e) { setStatus('err'); }
+}
+
+// Clicking ALL exits prog mode
+document.getElementById('btn-all').addEventListener('click', () => {
+  if (state.bProgScene) exitProgMode();
+});
+
+// ═══════════════════════════════════════════
+//  SETTINGS MODAL
+// ═══════════════════════════════════════════
+function openSettings() {
+  ['ip1','ip2','ip3','ip4'].forEach((id,i) => {
+    document.getElementById(id).value = state.ipList[i] || '';
+  });
+  document.getElementById('modal-settings').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('modal-settings').classList.remove('open');
+}
+
+function saveSettings() {
+  state.ipList = ['ip1','ip2','ip3','ip4'].map(id => document.getElementById(id).value.trim());
+  saveStorage();
+  updateTxVisibility();
+  // Reset TX status dots for reconfigured IPs
+  [1,2,3,4].forEach(n => { txStatus[n] = 'unknown'; const d = document.getElementById(`txdot-${n}`); if(d) d.className='tx-status-dot'; });
+  closeSettings();
+  showToast('Settings saved!', 'success');
+  startHealthMonitor(5000);
+}
+
+// ═══════════════════════════════════════════
+//  LOGIN MODAL (admin)
+// ═══════════════════════════════════════════
+document.getElementById('logo-btn').addEventListener('click', () => {
+  if (!state.bProgScene) getInfo();
+});
+
+function openLogin() {
+  document.getElementById('login-pwd').value = '';
+  document.getElementById('modal-login').classList.add('open');
+  setTimeout(() => document.getElementById('login-pwd').focus(), 200);
+}
+
+function closeLogin() {
+  document.getElementById('modal-login').classList.remove('open');
+}
+
+function loginKeyUp(e) {
+  if (e.key === 'Enter') doLogin();
+}
+
+function doLogin() {
+  const pwd = document.getElementById('login-pwd').value;
+  if (pwd === 'adminGiorgio') {
+    closeLogin();
+    openSettings();
+  } else {
+    document.getElementById('login-pwd').value = '';
+    showToast('Wrong password', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  EXIT MODAL
+// ═══════════════════════════════════════════
+function confirmExit() {
+  document.getElementById('modal-exit').classList.add('open');
+}
+function closeExit() {
+  document.getElementById('modal-exit').classList.remove('open');
+}
+function doExit() {
+  window.close();
+  // fallback: show message
+  setTimeout(() => showToast('Close this tab to exit', 'error'), 300);
+  closeExit();
+}
+
+// ═══════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ` ${type}` : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+function init() {
+  loadStorage();
+  buildLogoDots();
+  buildTimelineGrid();
+  buildColorRow();
+  buildAutoGrid();
+  updateTxVisibility();
+  // Initial getInfo + start health monitor
+  setTimeout(() => {
+    getInfo();
+    startHealthMonitor(5000);
+  }, 400);
+}
+
+init();
+
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
