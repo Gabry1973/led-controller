@@ -5,7 +5,8 @@ const ASSETS = [
   BASE + '/',
   BASE + '/index.html',
   BASE + '/manifest.json',
-  BASE + '/style.css'
+  BASE + '/style.css',
+  BASE + '/favicon.ico'
 ];
 
 self.addEventListener('install', e => {
