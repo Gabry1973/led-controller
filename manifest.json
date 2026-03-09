@@ -1,13 +1,11 @@
 {
   "name": "LED Controller – Lights Co",
   "short_name": "LED Ctrl",
-  "description": "Lights Co LED Controller PWA",
+  "description": "Lights Co LED Controller v2",
   "start_url": "/led-controller/index.html",
+  "scope": "/led-controller/",
   "display": "standalone",
-  "background_color": "#0a0a0f",
-  "theme_color": "#0a0a0f",
-  "orientation": "landscape",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }
-  ]
+  "background_color": "#080b0f",
+  "theme_color": "#080b0f",
+  "orientation": "landscape"
 }

@@ -3,27 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="theme-color" content="#080b0f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="LED Controller" />
-  <title>LED Controller – Lights Co</title>
+  <meta name="apple-mobile-web-app-title" content="LED Ctrl" />
+  <title>LED Controller v2 – Lights Co</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-
 </head>
 <body>
 
-<div class="prog-banner" id="prog-banner">⚡ PROG MODE – LONG PRESS SCENE TO EXIT</div>
+<div class="prog-banner" id="prog-banner">⚡ PROG MODE — LONG PRESS SCENE TO EXIT</div>
 
 <div id="app">
 
-  <!-- HEADER -->
+  <!-- ══ HEADER ══ -->
   <header>
-    <div class="logo-area" id="logo-btn" title="Refresh info">
+    <div class="logo-area" id="logo-btn" title="Tap to refresh">
       <div class="logo-dots" id="logo-dots"></div>
       <div class="logo-text">
         <span class="brand">LIGHTS CO</span>
@@ -33,100 +29,135 @@
 
     <div class="tx-group">
       <button class="tx-btn tx-btn-all active" id="btn-all" onclick="selectTx(0)">ALL</button>
-      <button class="tx-btn tx-btn-1" id="btn-tx1" onclick="selectTx(1)">TX 1<span class="tx-status-dot" id="txdot-1"></span></button>
-      <button class="tx-btn tx-btn-2" id="btn-tx2" onclick="selectTx(2)">TX 2<span class="tx-status-dot" id="txdot-2"></span></button>
-      <button class="tx-btn tx-btn-3" id="btn-tx3" onclick="selectTx(3)">TX 3<span class="tx-status-dot" id="txdot-3"></span></button>
-      <button class="tx-btn tx-btn-4" id="btn-tx4" onclick="selectTx(4)">TX 4<span class="tx-status-dot" id="txdot-4"></span></button>
+      <button class="tx-btn tx-btn-1" id="btn-tx1" onclick="selectTx(1)">
+        TX 1 <span class="tx-status-dot" id="txdot-1"></span>
+      </button>
+      <button class="tx-btn tx-btn-2" id="btn-tx2" onclick="selectTx(2)">
+        TX 2 <span class="tx-status-dot" id="txdot-2"></span>
+      </button>
+      <button class="tx-btn tx-btn-3" id="btn-tx3" onclick="selectTx(3)">
+        TX 3 <span class="tx-status-dot" id="txdot-3"></span>
+      </button>
+      <button class="tx-btn tx-btn-4" id="btn-tx4" onclick="selectTx(4)">
+        TX 4 <span class="tx-status-dot" id="txdot-4"></span>
+      </button>
     </div>
 
     <div class="header-actions">
-      <button class="icon-btn" onclick="openSettings()" title="Settings">⚙️</button>
+      <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
       <button class="icon-btn danger" onclick="confirmExit()" title="Exit">✕</button>
     </div>
   </header>
 
-  <!-- MAIN -->
+  <!-- ══ MAIN ══ -->
   <div class="main-content">
 
-    <!-- LEFT: scenes + timeline buttons -->
+    <!-- LEFT: Scene + Timeline -->
     <div class="left-panel">
       <div class="scene-row">
-        <button class="scene-btn" id="s1" data-scene="1"
+        <button class="scene-btn" id="s1"
           onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
           ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
           onmouseleave="sceneLeave(this)">S1</button>
-        <button class="scene-btn" id="s2" data-scene="2"
+        <button class="scene-btn" id="s2"
           onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
           ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
           onmouseleave="sceneLeave(this)">S2</button>
-        <button class="scene-btn" id="s3" data-scene="3"
+        <button class="scene-btn" id="s3"
           onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
           ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
           onmouseleave="sceneLeave(this)">S3</button>
-        <button class="scene-btn" id="s4" data-scene="4"
+        <button class="scene-btn" id="s4"
           onmousedown="sceneDown(this)" onmouseup="sceneUp(this)"
           ontouchstart="sceneDown(this)" ontouchend="sceneUp(this)"
           onmouseleave="sceneLeave(this)">S4</button>
       </div>
-      <div class="timeline-grid" id="timeline-grid"></div>
+
+      <div class="timeline-section">
+        <div class="timeline-section-label">Programs</div>
+        <div class="timeline-grid" id="timeline-grid"></div>
+      </div>
     </div>
 
     <!-- RIGHT -->
     <div class="right-panel">
 
-      <div class="current-label">
-        <span class="status-dot" id="status-dot"></span>
-        <span id="current-label">–</span>
+      <!-- Now playing -->
+      <div class="now-playing">
+        <span class="now-playing-label">NOW</span>
+        <span class="now-playing-value" id="current-label">–</span>
+        <span class="global-status" id="global-status"></span>
       </div>
 
-      <div class="sliders-area">
-        <div class="slider-row">
-          <span class="slider-label">Brightness</span>
-          <input type="range" id="brightness-slider" min="1" max="10" value="10"
-            oninput="onBrightness(this.value)" onchange="sendBrightness(this.value)">
-          <span class="slider-value" id="brightness-val">10</span>
+      <!-- Sliders -->
+      <div class="controls-card">
+        <div class="slider-block">
+          <div class="slider-header">
+            <span class="slider-name">Brightness</span>
+            <div class="slider-val"><span id="brightness-val">10</span><span>/10</span></div>
+          </div>
+          <div class="slider-track">
+            <div class="slider-fill" id="brightness-fill" style="width:100%"></div>
+            <input type="range" id="brightness-slider" min="1" max="10" value="10"
+              oninput="onBrightness(this.value)" onchange="sendBrightness(this.value)">
+          </div>
         </div>
-        <div class="slider-row">
-          <span class="slider-label">Speed</span>
-          <input type="range" id="speed-slider" min="1" max="10" value="8"
-            oninput="onSpeed(this.value)" onchange="sendSpeed(this.value)">
-          <span class="slider-value" id="speed-val">8</span>
+
+        <div class="divider-v"></div>
+
+        <div class="slider-block">
+          <div class="slider-header">
+            <span class="slider-name">Speed</span>
+            <div class="slider-val"><span id="speed-val">8</span><span>/10</span></div>
+          </div>
+          <div class="slider-track">
+            <div class="slider-fill" id="speed-fill" style="width:80%"></div>
+            <input type="range" id="speed-slider" min="1" max="10" value="8"
+              oninput="onSpeed(this.value)" onchange="sendSpeed(this.value)">
+          </div>
         </div>
       </div>
 
-      <!-- Solid colors row -->
-      <div class="color-row" id="color-row"></div>
-
-      <!-- Main effects -->
-      <div class="effects-area">
-        <button class="effect-btn btn-loop"       onclick="sendTimeline(0)"   id="btn-loop">⟳ Loop</button>
-        <button class="effect-btn btn-strobe"     onclick="sendEfx(2)"       id="btn-strobe">⚡ Strobe</button>
-        <button class="effect-btn btn-whiteflash" onclick="sendEfx(1)"       id="btn-wflash">◈ White Flash</button>
-      </div>
-      <div class="effects-area">
-        <button class="effect-btn btn-fade"       onclick="sendTimeline(127)" id="btn-fade">◐ Fade</button>
-        <button class="effect-btn btn-colorflash" onclick="sendTimeline(128)" id="btn-cflash">◈ Color Flash</button>
+      <!-- Colors -->
+      <div class="colors-card">
+        <div class="card-label">Colors</div>
+        <div class="color-swatches" id="color-swatches"></div>
       </div>
 
-      <!-- Auto programs -->
-      <div class="auto-grid" id="auto-grid"></div>
+      <!-- Effects -->
+      <div class="effects-card">
+        <div class="card-label">Effects</div>
+        <div class="effects-grid">
+          <button class="fx-btn fx-btn-loop" id="btn-loop" onclick="sendTimeline(0)">
+            <span class="fx-icon">⟳</span> Loop
+          </button>
+          <button class="fx-btn fx-btn-strobe" id="btn-strobe" onclick="sendEfx(2)">
+            <span class="fx-icon">⚡</span> Strobe
+          </button>
+          <button class="fx-btn fx-btn-flash" id="btn-wflash" onclick="sendEfx(1)">
+            <span class="fx-icon">◈</span> White Flash
+          </button>
+          <button class="fx-btn fx-btn-fade" id="btn-fade" onclick="sendTimeline(127)">
+            <span class="fx-icon">◐</span> Fade
+          </button>
+          <button class="fx-btn fx-btn-colorflash" id="btn-cflash" onclick="sendTimeline(128)">
+            <span class="fx-icon">✦</span> Color Flash
+          </button>
+        </div>
+      </div>
 
     </div>
   </div>
 </div>
 
-<!-- MODALS -->
+<!-- ══ MODALS ══ -->
 <div class="modal-overlay" id="modal-settings">
   <div class="modal">
-    <h2>⚙ Settings</h2>
-    <label>TX 1 – IP Address</label>
-    <input type="text" id="ip1" placeholder="192.168.80.5">
-    <label>TX 2 – IP Address</label>
-    <input type="text" id="ip2" placeholder="192.168.80.6">
-    <label>TX 3 – IP Address</label>
-    <input type="text" id="ip3" placeholder="192.168.80.7">
-    <label>TX 4 – IP Address</label>
-    <input type="text" id="ip4" placeholder="192.168.80.8">
+    <div class="modal-title">Settings</div>
+    <div class="modal-field"><label>TX 1 — IP Address</label><input type="text" id="ip1" placeholder="192.168.80.5"></div>
+    <div class="modal-field"><label>TX 2 — IP Address</label><input type="text" id="ip2" placeholder="192.168.80.6"></div>
+    <div class="modal-field"><label>TX 3 — IP Address</label><input type="text" id="ip3" placeholder="192.168.80.7"></div>
+    <div class="modal-field"><label>TX 4 — IP Address</label><input type="text" id="ip4" placeholder="192.168.80.8"></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
       <button class="btn-confirm" onclick="saveSettings()">Save</button>
@@ -136,9 +167,11 @@
 
 <div class="modal-overlay" id="modal-login">
   <div class="modal">
-    <h2>🔒 Admin Login</h2>
-    <label>Password</label>
-    <input type="password" id="login-pwd" placeholder="Enter password" onkeyup="loginKeyUp(event)">
+    <div class="modal-title">Admin Login</div>
+    <div class="modal-field">
+      <label>Password</label>
+      <input type="password" id="login-pwd" placeholder="Enter password" onkeyup="loginKeyUp(event)">
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeLogin()">Cancel</button>
       <button class="btn-confirm" onclick="doLogin()">Login</button>
@@ -148,11 +181,13 @@
 
 <div class="modal-overlay" id="modal-exit">
   <div class="modal">
-    <h2>Exit Application?</h2>
-    <p style="color:var(--text-dim);font-size:14px;margin-top:4px">The controller will stop responding to commands.</p>
+    <div class="modal-title">Exit Application?</div>
+    <p style="color:var(--text-mid);font-size:13px;line-height:1.5">
+      The controller will stop responding to commands from this device.
+    </p>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeExit()">No</button>
-      <button class="btn-confirm btn-danger-confirm" onclick="doExit()">Yes, Exit</button>
+      <button class="btn-cancel" onclick="closeExit()">Cancel</button>
+      <button class="btn-confirm btn-danger" onclick="doExit()">Exit</button>
     </div>
   </div>
 </div>
@@ -160,353 +195,302 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 const state = {
-  ipList: ['192.168.80.5', '192.168.80.6', '192.168.80.7', '192.168.80.8'],
-  currentTx: 0,       // 0 = ALL
+  ipList: ['192.168.80.5','192.168.80.6','192.168.80.7','192.168.80.8'],
+  currentTx: 0,
   bProgScene: false,
-  progScene: null,     // 's1'..'s4'
-  scenes: { s1: [-1,-1,-1,-1], s2: [-1,-1,-1,-1], s3: [-1,-1,-1,-1], s4: [-1,-1,-1,-1] },
-  selectedTimeline: null,
-  currentEfx: 0,
-  brightness: 10,
-  speed: 8,
-  sceneDownTime: 0,
-  sceneMouseDown: false,
+  progScene: null,
+  scenes: { s1:[-1,-1,-1,-1], s2:[-1,-1,-1,-1], s3:[-1,-1,-1,-1], s4:[-1,-1,-1,-1] },
   lastCurrent: '',
+  sceneMouseDown: false,
+  sceneDownTime: 0,
 };
 
-// ═══════════════════════════════════════════
-//  PERSIST (localStorage)
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════
 function loadStorage() {
   try {
-    const ips = localStorage.getItem('ipList');
+    const ips = localStorage.getItem('lc_ipList');
     if (ips) state.ipList = JSON.parse(ips);
-    const sc = localStorage.getItem('scenes');
+    const sc = localStorage.getItem('lc_scenes');
     if (sc) state.scenes = JSON.parse(sc);
   } catch(e) {}
 }
 function saveStorage() {
   try {
-    localStorage.setItem('ipList', JSON.stringify(state.ipList));
-    localStorage.setItem('scenes', JSON.stringify(state.scenes));
+    localStorage.setItem('lc_ipList', JSON.stringify(state.ipList));
+    localStorage.setItem('lc_scenes', JSON.stringify(state.scenes));
   } catch(e) {}
 }
 
-// ═══════════════════════════════════════════
-//  TIMELINE MAP
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  MAPS
+// ═══════════════════════════════════════════════
 const tlNames = {
-  0: 'LOOP', 127: 'FADE', 128: 'COLOR FLASH',
-  110: 'RED', 111: 'ORANGE', 112: 'YELLOW', 113: 'GREEN',
-  114: 'SKY', 115: 'BLUE', 116: 'PURPLE', 117: 'PINK',
-  118: 'WHITE', 119: 'BLACK',
-  130:'Auto 1',131:'Auto 2',132:'Auto 3',133:'Auto 4',134:'Auto 5',
-  135:'Auto 6',136:'Auto 7',137:'Auto 8',138:'Auto 9',139:'Auto 10',
-  140:'Auto 11',141:'Auto 12',142:'Auto 13',143:'Auto 14',144:'Auto 15',
-  145:'Auto 16',146:'Auto 17',147:'Auto 18',148:'Auto 19',149:'Auto 20',
+  0:'LOOP', 127:'FADE', 128:'COLOR FLASH',
+  110:'RED', 111:'ORANGE', 112:'YELLOW', 113:'GREEN',
+  114:'SKY', 115:'BLUE', 116:'PURPLE', 117:'PINK',
+  118:'WHITE', 119:'BLACK',
+  130:'Prog 1',131:'Prog 2',132:'Prog 3',133:'Prog 4',134:'Prog 5',
+  135:'Prog 6',136:'Prog 7',137:'Prog 8',138:'Prog 9',139:'Prog 10',
+  140:'Prog 11',141:'Prog 12',142:'Prog 13',143:'Prog 14',144:'Prog 15',
+  145:'Prog 16',146:'Prog 17',147:'Prog 18',148:'Prog 19',149:'Prog 20',
 };
 
 const colorDefs = [
-  { tl:110, label:'', color:'#e53935' },
-  { tl:111, label:'', color:'#fb8c00' },
-  { tl:112, label:'', color:'#fdd835' },
-  { tl:113, label:'', color:'#43a047' },
-  { tl:114, label:'', color:'#00bcd4' },
-  { tl:115, label:'', color:'#1e88e5' },
-  { tl:116, label:'', color:'#8e24aa' },
-  { tl:117, label:'', color:'#e91e8c' },
-  { tl:118, label:'', color:'#f5f5f5' },
-  { tl:119, label:'', color:'#424242' },
+  { tl:110, bg:'#c0392b', glow:'rgba(192,57,43,0.7)' },
+  { tl:111, bg:'#d35400', glow:'rgba(211,84,0,0.7)' },
+  { tl:112, bg:'#f1c40f', glow:'rgba(241,196,15,0.7)' },
+  { tl:113, bg:'#27ae60', glow:'rgba(39,174,96,0.7)' },
+  { tl:114, bg:'#16a085', glow:'rgba(22,160,133,0.7)' },
+  { tl:115, bg:'#2980b9', glow:'rgba(41,128,185,0.7)' },
+  { tl:116, bg:'#8e44ad', glow:'rgba(142,68,173,0.7)' },
+  { tl:117, bg:'#e91e8c', glow:'rgba(233,30,140,0.7)' },
+  { tl:118, bg:'linear-gradient(135deg,#ecf0f1,#bdc3c7)', glow:'rgba(200,210,220,0.5)' },
+  { tl:119, bg:'#2c3e50', glow:'rgba(44,62,80,0.5)' },
 ];
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  BUILD UI
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function buildLogoDots() {
-  const dotColors = [
-    '#e53935','#43a047','#1e88e5','#fdd835',
-    '#e91e8c','#00bcd4','#8e24aa','#fb8c00',
-    '#66bb6a','#42a5f5','#ce93d8','#80cbc4',
+  const colors = [
+    '#e74c3c','#2ecc71','#3498db','#f1c40f',
+    '#e91e8c','#1abc9c','#9b59b6','#e67e22',
+    '#a8e063','#74b9ff','#fd79a8','#55efc4',
   ];
-  const container = document.getElementById('logo-dots');
-  dotColors.forEach(c => {
+  const c = document.getElementById('logo-dots');
+  colors.forEach(col => {
     const d = document.createElement('div');
     d.className = 'logo-dot';
-    d.style.background = c;
-    container.appendChild(d);
+    d.style.background = col;
+    c.appendChild(d);
   });
 }
 
 function buildTimelineGrid() {
   const grid = document.getElementById('timeline-grid');
-  const rows = [
-    { nums:[1,2,3,4],   classes:['tl-red','tl-green','tl-blue','tl-white'] },
-    { nums:[5,6,7,8],   classes:['tl-red','tl-green','tl-blue','tl-white'] },
-    { nums:[9,10,11,12],classes:['tl-red','tl-green','tl-blue','tl-white'] },
-    { nums:[13,14,15,16],classes:['tl-red','tl-green','tl-blue','tl-white'] },
-    { nums:[17,18,19,20],classes:['tl-red','tl-green','tl-blue','tl-white'] },
-  ];
-  // Map display number -> timeline number
-  // 1->130, 2->131 ... 20->149
-  rows.forEach(row => {
-    row.nums.forEach((n,i) => {
-      const tl = 129 + n;
-      const btn = document.createElement('button');
-      btn.className = `tl-btn ${row.classes[i]}`;
-      btn.textContent = n;
-      btn.dataset.tl = tl;
-      btn.id = `tl-${tl}`;
-      btn.onclick = () => timelineClick(tl, btn);
-      grid.appendChild(btn);
-    });
-  });
+  const colorClasses = ['tl-red','tl-green','tl-blue','tl-white'];
+  for (let n = 1; n <= 20; n++) {
+    const tl = 129 + n;
+    const btn = document.createElement('button');
+    btn.className = `tl-btn ${colorClasses[(n-1) % 4]}`;
+    btn.textContent = n;
+    btn.dataset.tl = tl;
+    btn.id = `tl-${tl}`;
+    btn.onclick = () => tlClick(tl, btn);
+    grid.appendChild(btn);
+  }
 }
 
-function buildColorRow() {
-  const row = document.getElementById('color-row');
+function buildColorSwatches() {
+  const container = document.getElementById('color-swatches');
   colorDefs.forEach(c => {
     const sw = document.createElement('div');
     sw.className = 'color-swatch';
-    sw.style.background = c.color;
-    sw.dataset.tl = c.tl;
+    sw.style.background = c.bg;
+    sw.style.setProperty('--swatch-glow', c.glow);
     sw.id = `col-${c.tl}`;
-    sw.onclick = () => timelineClick(c.tl, sw, true);
-    row.appendChild(sw);
+    sw.dataset.tl = c.tl;
+    sw.onclick = () => tlClick(c.tl, sw);
+    container.appendChild(sw);
   });
 }
 
-function buildAutoGrid() {
-  const grid = document.getElementById('auto-grid');
-  // autos 11-20 on right panel
-  // We'll use the same 130-149 but labeled Auto 1-20
-  // Already in timeline grid. Here add nothing extra – the original app had them in the main grid.
-  // Keep grid hidden
-  grid.style.display = 'none';
-}
-
-// ═══════════════════════════════════════════
-//  TX HEALTH MONITOR
-// ═══════════════════════════════════════════
-// txStatus: 'unknown' | 'ok' | 'err'
-const txStatus = { 1: 'unknown', 2: 'unknown', 3: 'unknown', 4: 'unknown' };
-let healthTimer = null;
-
-function setTxDot(txNum, status) {
-  // status: 'unknown' | 'ok' | 'err'
-  if (txStatus[txNum] === status) return; // no change
-  txStatus[txNum] = status;
-  const dot = document.getElementById(`txdot-${txNum}`);
-  if (!dot) return;
-  dot.className = 'tx-status-dot ' + status;
-  dot.title = status === 'ok'  ? `TX ${txNum}: raggiungibile` :
-              status === 'err' ? `TX ${txNum}: non raggiungibile` : '';
-  // If this TX is currently selected, also update global status bar
-  if (state.currentTx === txNum) {
-    setStatus(status === 'ok' ? 'ok' : 'err');
-  }
-  // Toast only on state change to error
-  if (status === 'err') {
-    showToast(`TX ${txNum} non raggiungibile`, 'error');
-  }
-}
-
-async function pingTx(txNum) {
-  const ip = state.ipList[txNum - 1];
-  if (!ip) { setTxDot(txNum, 'unknown'); return; }
-  try {
-    await httpGet(ip, '/txinfo');
-    setTxDot(txNum, 'ok');
-  } catch(e) {
-    setTxDot(txNum, 'err');
-  }
-}
-
-async function pingAllTx() {
-  const configured = state.ipList.map((ip, i) => ip ? i + 1 : null).filter(Boolean);
-  await Promise.allSettled(configured.map(n => pingTx(n)));
-}
-
-function startHealthMonitor(intervalMs = 5000) {
-  stopHealthMonitor();
-  pingAllTx(); // immediate first check
-  healthTimer = setInterval(pingAllTx, intervalMs);
-}
-
-function stopHealthMonitor() {
-  if (healthTimer) { clearInterval(healthTimer); healthTimer = null; }
-}
-
-
+// ═══════════════════════════════════════════════
+//  TX SELECTION
+// ═══════════════════════════════════════════════
 function selectTx(n) {
   state.currentTx = n;
-  ['btn-all','btn-tx1','btn-tx2','btn-tx3','btn-tx4'].forEach((id,i) => {
+  ['btn-all','btn-tx1','btn-tx2','btn-tx3','btn-tx4'].forEach((id, i) => {
     document.getElementById(id).classList.toggle('active', i === n);
   });
-  // Hide tx buttons for unconfigured IPs
   updateTxVisibility();
   if (state.bProgScene) showCurrentScene();
   else getInfo();
 }
 
 function updateTxVisibility() {
-  ['btn-tx2','btn-tx3','btn-tx4'].forEach((id,i) => {
-    const el = document.getElementById(id);
-    el.style.display = state.ipList[i+1] ? '' : 'none';
+  [2,3,4].forEach(n => {
+    const el = document.getElementById(`btn-tx${n}`);
+    el.style.display = state.ipList[n-1] ? '' : 'none';
   });
 }
 
-// ═══════════════════════════════════════════
-//  HTTP HELPERS
-// ═══════════════════════════════════════════
-async function httpGet(ip, path) {
-  const url = `http://${ip}${path}`;
-  const resp = await fetch(url, { signal: AbortSignal.timeout(800) });
-  return resp.text();
+// ═══════════════════════════════════════════════
+//  TX HEALTH MONITOR
+// ═══════════════════════════════════════════════
+const txStatus = {1:'unknown',2:'unknown',3:'unknown',4:'unknown'};
+let healthTimer = null;
+
+function setTxDot(n, status) {
+  if (txStatus[n] === status) return;
+  const prev = txStatus[n];
+  txStatus[n] = status;
+  const dot = document.getElementById(`txdot-${n}`);
+  if (dot) dot.className = 'tx-status-dot ' + status;
+  if (state.currentTx === n) setGlobalStatus(status);
+  if (status === 'err' && prev !== 'unknown') showToast(`TX ${n} non raggiungibile`, 'error');
 }
 
+async function pingTx(n) {
+  const ip = state.ipList[n-1];
+  if (!ip) { setTxDot(n,'unknown'); return; }
+  try { await httpGet(ip, '/txinfo'); setTxDot(n,'ok'); }
+  catch(e) { setTxDot(n,'err'); }
+}
+
+function pingAll() {
+  state.ipList.forEach((ip, i) => { if (ip) pingTx(i+1); });
+}
+
+function startMonitor() {
+  stopMonitor();
+  pingAll();
+  healthTimer = setInterval(pingAll, 5000);
+}
+
+function stopMonitor() {
+  if (healthTimer) { clearInterval(healthTimer); healthTimer = null; }
+}
+
+// ═══════════════════════════════════════════════
+//  HTTP
+// ═══════════════════════════════════════════════
+async function httpGet(ip, path) {
+  const r = await fetch(`http://${ip}${path}`, { signal: AbortSignal.timeout(800) });
+  return r.text();
+}
 async function httpPost(ip, path, params) {
-  const url = `http://${ip}${path}`;
-  const body = new URLSearchParams(params);
-  const resp = await fetch(url, {
+  const r = await fetch(`http://${ip}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString(),
+    body: new URLSearchParams(params).toString(),
     signal: AbortSignal.timeout(800),
   });
-  return resp.text();
+  return r.text();
 }
 
 function getTargetIps() {
-  if (state.currentTx === 0)
-    return state.ipList.filter(Boolean);
+  if (state.currentTx === 0) return state.ipList.filter(Boolean);
   const ip = state.ipList[state.currentTx - 1];
   return ip ? [ip] : [];
 }
 
-// ═══════════════════════════════════════════
-//  COMMANDS
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  STATUS UI
+// ═══════════════════════════════════════════════
 function setCurrentLabel(text) {
   document.getElementById('current-label').textContent = text.toUpperCase();
 }
-
-function setStatus(mode) { // 'idle' | 'sending' | 'ok' | 'err'
-  const dot = document.getElementById('status-dot');
-  dot.className = 'status-dot' + (mode !== 'idle' ? ` ${mode}` : '');
+function setGlobalStatus(s) {
+  const el = document.getElementById('global-status');
+  el.className = 'global-status' + (s !== 'idle' ? ` ${s}` : '');
 }
 
+// ═══════════════════════════════════════════════
+//  COMMANDS
+// ═══════════════════════════════════════════════
 async function sendTimeline(tl) {
   if (state.bProgScene) { setSceneTimeline(tl); return; }
-  const name = tlNames[tl] || `TL ${tl}`;
-  setCurrentLabel(name);
-  setStatus('sending');
-  const ips = getTargetIps();
+  setCurrentLabel(tlNames[tl] || `TL ${tl}`);
+  setGlobalStatus('sending');
+  clearFxActive();
   try {
-    await Promise.all(ips.map(ip => httpPost(ip, '/chtl', { tlnum: tl })));
-    setStatus('ok');
-  } catch(e) {
-    setStatus('err');
-  }
-  // clear selected efx
-  document.getElementById('btn-strobe').classList.remove('active');
-  document.getElementById('btn-wflash').classList.remove('active');
+    await Promise.all(getTargetIps().map(ip => httpPost(ip, '/chtl', { tlnum: tl })));
+    setGlobalStatus('ok');
+  } catch(e) { setGlobalStatus('err'); }
 }
 
 async function sendEfx(efxnum) {
   if (state.bProgScene) return;
-  setStatus('sending');
+  setGlobalStatus('sending');
   const ips = getTargetIps();
   let newEfx = 0;
   try {
-    const results = await Promise.all(ips.map(ip => httpPost(ip, '/setefx', { efxnum })));
-    // Use first result to update UI
-    if (results[0]) newEfx = parseInt(results[0]) || 0;
-    setStatus('ok');
-  } catch(e) {
-    setStatus('err');
-  }
+    const res = await Promise.all(ips.map(ip => httpPost(ip, '/setefx', { efxnum })));
+    if (res[0]) newEfx = parseInt(res[0]) || 0;
+    setGlobalStatus('ok');
+  } catch(e) { setGlobalStatus('err'); }
   document.getElementById('btn-strobe').classList.toggle('active', newEfx === 2);
   document.getElementById('btn-wflash').classList.toggle('active', newEfx === 1);
 }
 
 async function sendBrightness(val) {
-  setStatus('sending');
-  const ips = getTargetIps();
+  setGlobalStatus('sending');
   try {
-    await Promise.all(ips.map(ip => httpGet(ip, `/setbrightness${val}`)));
-    setStatus('ok');
-  } catch(e) { setStatus('err'); }
+    await Promise.all(getTargetIps().map(ip => httpGet(ip, `/setbrightness${val}`)));
+    setGlobalStatus('ok');
+  } catch(e) { setGlobalStatus('err'); }
 }
 
 async function sendSpeed(val) {
-  setStatus('sending');
-  const ips = getTargetIps();
+  setGlobalStatus('sending');
   try {
-    await Promise.all(ips.map(ip => httpGet(ip, `/setspeed${val}`)));
-    setStatus('ok');
-  } catch(e) { setStatus('err'); }
+    await Promise.all(getTargetIps().map(ip => httpGet(ip, `/setspeed${val}`)));
+    setGlobalStatus('ok');
+  } catch(e) { setGlobalStatus('err'); }
 }
 
 async function getInfo() {
-  const ip = state.currentTx <= 1 ? state.ipList[0] : state.ipList[state.currentTx - 1];
+  const idx = state.currentTx <= 1 ? 0 : state.currentTx - 1;
+  const ip = state.ipList[idx];
   if (!ip) return;
   try {
     const ris = await httpGet(ip, '/txinfo');
     parseInfo(ris);
-    setStatus('ok');
-  } catch(e) { setStatus('err'); }
+    setGlobalStatus('ok');
+  } catch(e) { setGlobalStatus('err'); }
 }
 
 function parseInfo(ris) {
-  // format: "timeline=0|efx=1|vel=8|bright=10"
   ris.split('|').forEach(part => {
-    const [k, v] = part.split('=');
+    const [k,v] = part.split('=');
     if (!k || v === undefined) return;
     const val = parseInt(v);
-    if (k === 'timeline') {
-      const name = tlNames[val] || `TL ${val}`;
-      setCurrentLabel(name);
-    }
+    if (k === 'timeline') setCurrentLabel(tlNames[val] || `TL ${val}`);
     if (k === 'efx') {
       document.getElementById('btn-strobe').classList.toggle('active', val === 2);
       document.getElementById('btn-wflash').classList.toggle('active', val === 1);
     }
-    if (k === 'vel') {
-      document.getElementById('speed-slider').value = val;
-      document.getElementById('speed-val').textContent = val;
-    }
-    if (k === 'bright') {
-      document.getElementById('brightness-slider').value = val;
-      document.getElementById('brightness-val').textContent = val;
-    }
+    if (k === 'vel')    { document.getElementById('speed-slider').value = val; onSpeed(val); }
+    if (k === 'bright') { document.getElementById('brightness-slider').value = val; onBrightness(val); }
   });
 }
 
-// ═══════════════════════════════════════════
-//  SLIDER HANDLERS
-// ═══════════════════════════════════════════
-function onBrightness(v) { document.getElementById('brightness-val').textContent = v; }
-function onSpeed(v)      { document.getElementById('speed-val').textContent = v; }
+function clearFxActive() {
+  document.getElementById('btn-strobe').classList.remove('active');
+  document.getElementById('btn-wflash').classList.remove('active');
+}
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  SLIDER HANDLERS
+// ═══════════════════════════════════════════════
+function onBrightness(v) {
+  document.getElementById('brightness-val').textContent = v;
+  document.getElementById('brightness-fill').style.width = ((v-1)/9*100) + '%';
+}
+function onSpeed(v) {
+  document.getElementById('speed-val').textContent = v;
+  document.getElementById('speed-fill').style.width = ((v-1)/9*100) + '%';
+}
+
+// ═══════════════════════════════════════════════
 //  TIMELINE CLICK
-// ═══════════════════════════════════════════
-function timelineClick(tl, el, isColor) {
-  // clear previous selection
-  document.querySelectorAll('.tl-btn.selected, .color-swatch.selected').forEach(b => b.classList.remove('selected'));
-  if (el) el.classList.add('selected');
-  el?.classList.add('lit');
-  setTimeout(() => el?.classList.remove('lit'), 300);
+// ═══════════════════════════════════════════════
+function tlClick(tl, el) {
+  document.querySelectorAll('.tl-btn.selected,.color-swatch.selected').forEach(b => b.classList.remove('selected'));
+  el?.classList.add('selected');
   sendTimeline(tl);
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SCENE PROGRAMMING
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 let sceneHoldTimer = null;
 
 function sceneDown(el) {
@@ -522,17 +506,12 @@ function sceneUp(el) {
   clearTimeout(sceneHoldTimer);
   const held = Date.now() - state.sceneDownTime;
   state.sceneMouseDown = false;
-
   if (state.bProgScene) {
-    if (held >= 5000) {
-      // already handled by timer
-    } else {
-      // switch prog scene
-      const allS = document.querySelectorAll('.scene-btn');
-      allS.forEach(s => { s.classList.remove('active','prog-mode'); });
+    if (held < 5000) {
+      document.querySelectorAll('.scene-btn').forEach(s => s.classList.remove('active','prog-mode'));
       el.classList.add('prog-mode');
       state.progScene = el.id;
-      document.getElementById('current-label').textContent = 'PROG ' + el.id.toUpperCase();
+      setCurrentLabel('PROG ' + el.id.toUpperCase());
       showCurrentScene();
     }
   } else {
@@ -550,14 +529,11 @@ function sceneLeave(el) {
 function enterProgMode(el) {
   state.bProgScene = true;
   state.lastCurrent = document.getElementById('current-label').textContent;
-  // ensure a TX is selected
-  if (state.currentTx === 0) {
-    selectTx(1);
-  }
-  document.querySelectorAll('.scene-btn').forEach(s => { s.classList.remove('active','prog-mode'); });
+  if (state.currentTx === 0) selectTx(1);
+  document.querySelectorAll('.scene-btn').forEach(s => s.classList.remove('active','prog-mode'));
   el.classList.add('prog-mode');
   state.progScene = el.id;
-  document.getElementById('current-label').textContent = 'PROG ' + el.id.toUpperCase();
+  setCurrentLabel('PROG ' + el.id.toUpperCase());
   document.getElementById('prog-banner').classList.add('show');
   showCurrentScene();
 }
@@ -565,26 +541,25 @@ function enterProgMode(el) {
 function exitProgMode() {
   saveStorage();
   state.bProgScene = false;
-  document.querySelectorAll('.scene-btn').forEach(s => { s.classList.remove('active','prog-mode'); });
+  document.querySelectorAll('.scene-btn').forEach(s => s.classList.remove('active','prog-mode'));
   document.getElementById('prog-banner').classList.remove('show');
-  document.getElementById('current-label').textContent = state.lastCurrent || '–';
-  // clear selected glows
-  document.querySelectorAll('.tl-btn.selected, .color-swatch.selected').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.tl-btn.selected,.color-swatch.selected').forEach(b => b.classList.remove('selected'));
+  setCurrentLabel(state.lastCurrent || '–');
 }
 
 function setSceneTimeline(tl) {
   if (!state.bProgScene || !state.progScene) return;
-  const txIndex = state.currentTx > 0 ? state.currentTx - 1 : 0;
-  state.scenes[state.progScene][txIndex] = tl;
+  const idx = state.currentTx > 0 ? state.currentTx - 1 : 0;
+  state.scenes[state.progScene][idx] = tl;
   showCurrentScene();
-  showToast(`Scene ${state.progScene.toUpperCase()} TX${txIndex+1} → ${tlNames[tl] || tl}`, 'success');
+  showToast(`${state.progScene.toUpperCase()} TX${idx+1} → ${tlNames[tl] || tl}`, 'success');
 }
 
 function showCurrentScene() {
-  document.querySelectorAll('.tl-btn.selected, .color-swatch.selected').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.tl-btn.selected,.color-swatch.selected').forEach(b => b.classList.remove('selected'));
   if (!state.bProgScene || !state.progScene) return;
-  const txIndex = state.currentTx > 0 ? state.currentTx - 1 : 0;
-  const tl = state.scenes[state.progScene][txIndex];
+  const idx = state.currentTx > 0 ? state.currentTx - 1 : 0;
+  const tl = state.scenes[state.progScene][idx];
   if (tl !== -1) {
     const el = document.getElementById(`tl-${tl}`) || document.getElementById(`col-${tl}`);
     if (el) el.classList.add('selected');
@@ -592,137 +567,113 @@ function showCurrentScene() {
 }
 
 async function sendScene(el) {
-  const sceneId = el.id; // 's1'..'s4'
-  const sceneTls = state.scenes[sceneId];
-  const name = 'SCENE ' + sceneId.toUpperCase();
-  setCurrentLabel(name);
-  setStatus('sending');
+  const sc = state.scenes[el.id];
+  setCurrentLabel('SCENE ' + el.id.toUpperCase());
+  setGlobalStatus('sending');
   try {
     const promises = [];
     state.ipList.forEach((ip, i) => {
-      if (ip && sceneTls[i] !== -1) {
-        promises.push(httpPost(ip, '/chtl', { tlnum: sceneTls[i] }));
-      }
+      if (ip && sc[i] !== -1) promises.push(httpPost(ip, '/chtl', { tlnum: sc[i] }));
     });
     await Promise.all(promises);
-    setStatus('ok');
-  } catch(e) { setStatus('err'); }
+    setGlobalStatus('ok');
+  } catch(e) { setGlobalStatus('err'); }
 }
 
-// Clicking ALL exits prog mode
+// ALL button exits prog mode
 document.getElementById('btn-all').addEventListener('click', () => {
   if (state.bProgScene) exitProgMode();
 });
 
-// ═══════════════════════════════════════════
-//  SETTINGS MODAL
-// ═══════════════════════════════════════════
+// Logo = refresh
+document.getElementById('logo-btn').addEventListener('click', () => {
+  if (!state.bProgScene) getInfo();
+});
+
+// ═══════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════
 function openSettings() {
   ['ip1','ip2','ip3','ip4'].forEach((id,i) => {
     document.getElementById(id).value = state.ipList[i] || '';
   });
   document.getElementById('modal-settings').classList.add('open');
 }
-
 function closeSettings() {
   document.getElementById('modal-settings').classList.remove('open');
 }
-
 function saveSettings() {
   state.ipList = ['ip1','ip2','ip3','ip4'].map(id => document.getElementById(id).value.trim());
   saveStorage();
   updateTxVisibility();
-  // Reset TX status dots for reconfigured IPs
-  [1,2,3,4].forEach(n => { txStatus[n] = 'unknown'; const d = document.getElementById(`txdot-${n}`); if(d) d.className='tx-status-dot'; });
+  [1,2,3,4].forEach(n => {
+    txStatus[n] = 'unknown';
+    const d = document.getElementById(`txdot-${n}`);
+    if (d) d.className = 'tx-status-dot';
+  });
   closeSettings();
   showToast('Settings saved!', 'success');
-  startHealthMonitor(5000);
+  startMonitor();
 }
 
-// ═══════════════════════════════════════════
-//  LOGIN MODAL (admin)
-// ═══════════════════════════════════════════
-document.getElementById('logo-btn').addEventListener('click', () => {
-  if (!state.bProgScene) getInfo();
-});
-
+// ═══════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════
 function openLogin() {
   document.getElementById('login-pwd').value = '';
   document.getElementById('modal-login').classList.add('open');
   setTimeout(() => document.getElementById('login-pwd').focus(), 200);
 }
-
-function closeLogin() {
-  document.getElementById('modal-login').classList.remove('open');
-}
-
-function loginKeyUp(e) {
-  if (e.key === 'Enter') doLogin();
-}
-
+function closeLogin() { document.getElementById('modal-login').classList.remove('open'); }
+function loginKeyUp(e) { if (e.key === 'Enter') doLogin(); }
 function doLogin() {
-  const pwd = document.getElementById('login-pwd').value;
-  if (pwd === 'adminGiorgio') {
-    closeLogin();
-    openSettings();
+  if (document.getElementById('login-pwd').value === 'adminGiorgio') {
+    closeLogin(); openSettings();
   } else {
     document.getElementById('login-pwd').value = '';
     showToast('Wrong password', 'error');
   }
 }
 
-// ═══════════════════════════════════════════
-//  EXIT MODAL
-// ═══════════════════════════════════════════
-function confirmExit() {
-  document.getElementById('modal-exit').classList.add('open');
-}
-function closeExit() {
-  document.getElementById('modal-exit').classList.remove('open');
-}
+// ═══════════════════════════════════════════════
+//  EXIT
+// ═══════════════════════════════════════════════
+function confirmExit() { document.getElementById('modal-exit').classList.add('open'); }
+function closeExit()    { document.getElementById('modal-exit').classList.remove('open'); }
 function doExit() {
-  window.close();
-  // fallback: show message
-  setTimeout(() => showToast('Close this tab to exit', 'error'), 300);
   closeExit();
+  window.close();
+  setTimeout(() => showToast('Close this tab to exit', 'error'), 300);
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  TOAST
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 let toastTimer;
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (type ? ` ${type}` : '');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  INIT
-// ═══════════════════════════════════════════
+// ═══════════════════════════════════════════════
 function init() {
   loadStorage();
   buildLogoDots();
   buildTimelineGrid();
-  buildColorRow();
-  buildAutoGrid();
+  buildColorSwatches();
   updateTxVisibility();
-  // Initial getInfo + start health monitor
-  setTimeout(() => {
-    getInfo();
-    startHealthMonitor(5000);
-  }, 400);
+  setTimeout(() => { getInfo(); startMonitor(); }, 500);
 }
 
 init();
 
-// Service Worker registration
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 </script>
 </body>
